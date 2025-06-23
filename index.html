@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Payment Gateway - DANA & QRIS</title>
+    <style>
+        :root {
+            --primary: #00B0FF;
+            --primary-dark: #0081CB;
+            --secondary: #FF6D00;
+            --light: #f8f9fa;
+            --dark: #212529;
+            --gray: #6c757d;
+            --success: #28a745;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #f5f7fa 0%, #e4e8ed 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+        
+        .payment-container {
+            background-color: white;
+            border-radius: 16px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            width: 100%;
+            max-width: 500px;
+            overflow: hidden;
+            transition: all 0.3s ease;
+        }
+        
+        .payment-container:hover {
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.15);
+            transform: translateY(-5px);
+        }
+        
+        .payment-header {
+            background: linear-gradient(to right, var(--primary), var(--primary-dark));
+            color: white;
+            padding: 20px;
+            text-align: center;
+            position: relative;
+        }
+        
+        .payment-header h2 {
+            font-weight: 600;
+            margin-bottom: 5px;
+        }
+        
+        .payment-body {
+            padding: 30px;
+        }
+        
+        .payment-method {
+            margin-bottom: 30px;
+        }
+        
+        .method-title {
+            display: flex;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid #eee;
+        }
+        
+        .method-title img {
+            height: 30px;
+            margin-right: 10px;
+        }
+        
+        .method-title h3 {
+            color: var(--dark);
+            font-weight: 600;
+        }
+        
+        .dana-number {
+            background-color: #f8f9fa;
+            border-radius: 8px;
+            padding: 15px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            transition: all 0.3s ease;
+        }
+        
+        .dana-number:hover {
+            background-color: #e9ecef;
+        }
+        
+        .dana-number span {
+            font-size: 18px;
+            font-weight: 600;
+            color: var(--dark);
+        }
+        
+        .copy-btn {
+            background-color: var(--primary);
+            color: white;
+            border: none;
+            border-radius: 6px;
+            padding: 8px 12px;
+            cursor: pointer;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+        
+        .copy-btn:hover {
+            background-color: var(--primary-dark);
+        }
+        
+        .qris-container {
+            text-align: center;
+            padding: 20px;
+            background-color: #f8f9fa;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+        
+        .qris-container img {
+            max-width: 100%;
+            height: auto;
+            border-radius: 8px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        }
+        
+        .instructions {
+            background-color: #fff8e1;
+            border-left: 4px solid var(--secondary);
+            padding: 15px;
+            border-radius: 0 8px 8px 0;
+            margin-bottom: 20px;
+        }
+        
+        .instructions h4 {
+            color: var(--secondary);
+            margin-bottom: 10px;
+        }
+        
+        .instructions ol {
+            padding-left: 20px;
+            color: var(--dark);
+        }
+        
+        .instructions li {
+            margin-bottom: 8px;
+        }
+        
+        .payment-footer {
+            text-align: center;
+            color: var(--gray);
+            font-size: 14px;
+            padding: 20px;
+            border-top: 1px solid #eee;
+        }
+        
+        .success-message {
+            display: none;
+            background-color: rgba(40, 167, 69, 0.1);
+            color: var(--success);
+            padding: 15px;
+            border-radius: 8px;
+            text-align: center;
+            margin-bottom: 20px;
+            animation: fadeIn 0.5s ease;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        @media (max-width: 576px) {
+            .payment-body {
+                padding: 20px;
+            }
+            
+            .dana-number span {
+                font-size: 16px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="payment-container">
+        <div class="payment-header">
+            <h2>Payment Gateway</h2>
+            <p>Choose your payment method</p>
+        </div>
+        
+        <div class="payment-body">
+            <div class="success-message" id="successMessage">
+                Payment number copied to clipboard!
+            </div>
+            
+            <div class="payment-method">
+                <div class="method-title">
+                    <img src="https://upload.wikimedia.org/wikipedia/commons/7/72/Logo_dana_blue.svg" alt="DANA Logo">
+                    <h3>DANA Payment</h3>
+                </div>
+                
+                <div class="dana-number">
+                    <span id="danaNumber">083846701246</span>
+                    <button class="copy-btn" id="copyBtn">Copy</button>
+                </div>
+                
+                <div class="instructions">
+                    <h4>Payment Instructions:</h4>
+                    <ol>
+                        <li>Copy the DANA number above</li>
+                        <li>Open DANA app on your phone</li>
+                        <li>Paste the number and send your payment</li>
+                        <li>Confirm the payment details</li>
+                    </ol>
+                </div>
+            </div>
+            
+            <div class="payment-method">
+                <div class="method-title">
+                    <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/d/d0/QRIS_logo.svg/1200px-QRIS_logo.svg.png" alt="QRIS Logo" style="height: 28px;">
+                    <h3>QRIS Payment</h3>
+                </div>
+                
+                <div class="qris-container">
+                    <img src="https://files.catbox.moe/dvbp8g.jpeg" alt="QRIS Code">
+                </div>
+                
+                <div class="instructions">
+                    <h4>Payment Instructions:</h4>
+                    <ol>
+                        <li>Open your mobile banking or e-wallet app</li>
+                        <li>Select QRIS payment option</li>
+                        <li>Scan the QR code above</li>
+                        <li>Confirm the payment amount and complete transaction</li>
+                    </ol>
+                </div>
+            </div>
+        </div>
+        
+        <div class="payment-footer">
+            <p>After payment, please confirm via our contact channel</p>
+            <p>Thank you for your purchase!</p>
+        </div>
+    </div>
+    
+    <script>
+        document.getElementById('copyBtn').addEventListener('click', function() {
+            const danaNumber = document.getElementById('danaNumber').textContent;
+            navigator.clipboard.writeText(danaNumber).then(function() {
+                const successMessage = document.getElementById('successMessage');
+                successMessage.style.display = 'block';
+                
+                setTimeout(function() {
+                    successMessage.style.display = 'none';
+                }, 3000);
+            });
+        });
+    </script>
+</body>
+</html>
